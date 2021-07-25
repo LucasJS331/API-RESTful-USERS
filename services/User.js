@@ -6,7 +6,7 @@ class User{
 
     async findAll(){
         try{
-            var result = await knex.select(["id","email","role","name", "image"]).table("user_api");
+            var result = await knex.select(["id","email","role","name", "image"]).table(process.env.DB_TABLE_USER);
             return result;
         }catch(err){
             console.log(err);
@@ -16,7 +16,7 @@ class User{
 
     async findById(id){
         try{
-            var result = await knex.select(["id","email","role","name", "image"]).where({id:id}).table("user_api");
+            var result = await knex.select(["id","email","role","name", "image"]).where({id:id}).table(process.env.DB_TABLE_USER);
             
             if(result.length > 0){
                 return result[0];
@@ -32,7 +32,7 @@ class User{
 
     async findByEmail(email){
         try{
-            var result = await knex.select(["id","email","password","role","name"]).where({email:email}).table("users");
+            var result = await knex.select(["id","email","password","role","name"]).where({email:email}).table(process.env.DB_TABLE_USER);
             
             if(result.length > 0){
                 return result[0];
@@ -57,7 +57,7 @@ class User{
                 image = "uploads/" + image
             }
 
-           let result =  await knex.insert({email,password: hash,name,role: 0, image}).table("user_api");
+           let result =  await knex.insert({email,password: hash,name,role: 0, image}).table(process.env.DB_TABLE_USER);
            return result[0];
         }catch(err){
             console.log(err);
@@ -70,7 +70,7 @@ class User{
 
     async findEmail(email){
         try{
-            var result = await knex.select("*").from("user_api").where({email: email});
+            var result = await knex.select("*").from(process.env.DB_TABLE_USER).where({email: email});
             
             if(result.length > 0){
                 return true;
@@ -118,7 +118,7 @@ class User{
 
 
             try{
-                await knex.update(editUser).where({id: id}).table("user_api");
+                await knex.update(editUser).where({id: id}).table(process.env.DB_TABLE_USER);
                 return {status: true}
             }catch(err){
                 return {status: false,err: err}
@@ -134,7 +134,7 @@ class User{
         if(user != undefined){
 
             try{
-                await knex.delete().where({id: id}).table("user_api");
+                await knex.delete().where({id: id}).table(process.env.DB_TABLE_USER);
                 return {status: true}
             }catch(err){
                 return {status: false,err: err}
@@ -147,7 +147,7 @@ class User{
 
     async changePassword(newPassword,id,token){
         var hash = await bcrypt.hash(newPassword, 10);
-        await knex.update({password: hash}).where({id: id}).table("user_api");
+        await knex.update({password: hash}).where({id: id}).table(process.env.DB_TABLE_USER);
         await PasswordToken.setUsed(token);
     }
 }

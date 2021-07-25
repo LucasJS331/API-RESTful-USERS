@@ -3,15 +3,16 @@ var User = require("./User");
 
 class PasswordToken{
     async create(email){
-        var user = await User.findByEmail(email);
-        if(user != undefined){
+        var user = await knex.select(["id","email","password","role","name"]).where({email:email}).table(process.env.DB_TABLE_USER);
+
+        if(user[0] != undefined){
             try{
                 var token = Date.now();
                 await knex.insert({
-                    user_id: user.id,
+                    id_user: user[0].id,
                     used: 0,
                     token: token // UUID
-                }).table("passwordtokens");
+                }).table(process.env.DB_TABLE_TOKEN);
 
                 return {status: true,token: token}
             }catch(err){
@@ -25,8 +26,7 @@ class PasswordToken{
 
     async validate(token){
         try{
-            var result = await knex.select().where({token: token}).table("passwordtokens");
-
+            var result = await knex.select().where({token: token}).table(process.env.DB_TABLE_TOKEN);
             if(result.length > 0){
 
                 var tk = result[0];
@@ -47,7 +47,7 @@ class PasswordToken{
     }
 
     async setUsed(token){
-        await knex.update({used: 1}).where({token: token}).table("passwordtokens");
+        await knex.update({used: 1}).where({token: token}).table(process.env.DB_TABLE_TOKEN);
     }
 }
 
