@@ -10,7 +10,7 @@ router.get("/users",auth, userController.findAll);
 router.get("/user/:id",auth, userController.findOne);
 router.put("/user/:id",auth, multerM.single("image"), userController.edit);
 router.delete("/user/:id",auth, userController.remove);
-router.post("/recover", auth, userController.recoverPassword);
+router.post("/recover", userController.recoverPassword);
 router.post("/changePassword", userController.changePassword);
 router.post("/auth", userController.login);
 

@@ -1,6 +1,5 @@
 var User = require("../services/User");
 var PasswordToken = require("../services/PasswordToken");
-const validatorUser = require("../validator/user-validator");
 const userValidator = require("../validator/user-validator");
 var fs = require('fs');
 
@@ -79,7 +78,7 @@ class UserController{
     async create(req, res){
         var {email, name, password} = req.body;
         var image = req.file ?  req.file.filename : "default";
-        var result = await validatorUser.newUserValidation(name,email,password);
+        var result = await userValidator.newUserValidation(name,email,password);
         if(result.status == 200){
            
            let id =  await User.new(email,password,name, image);
